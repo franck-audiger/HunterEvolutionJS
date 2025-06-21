@@ -46,6 +46,10 @@ BattleManager.initMembers = function() {
     this._step = "init";
 };
 
+BattleManager.canEscape = function() {
+    return this._canEscape;
+};
+
 BattleManager.getActorForAction = function() {
     if(!this._actorForAction){
         this._actorForAction = [];
@@ -224,7 +228,7 @@ BattleManager.update = function() {
                     this.getActorForAction().push(actor);
                     this._actionInputIndex++;
                     action.applyGlobal();
-                    this.refreshStatus();
+                    //this.refreshStatus();
                 } else if (this.getReadyActionToExecute().length - 1 >= this._actionExecuteIndex){
                     this._step = "actions";
                 }
@@ -248,8 +252,9 @@ BattleManager.update = function() {
                 var subject = this.getActorForAction()[this._actionExecuteIndex]
                 this._logWindow.endAction(subject);
                 subject.setActionState("undecided");
-                subject.clearStates();
+                //subject.clearStates();
                 this._actionExecuteIndex++;
+                subject.decreaseGuard();
                 this._step = "init";
                 break
             case "input":

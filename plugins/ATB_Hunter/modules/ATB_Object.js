@@ -8,21 +8,29 @@ Game_Battler.prototype.isGuardWaiting = function() {
     return this.isGuard();
 };
 
-
-Game_Battler.prototype.isGuard = function() {
-    if (this._actions.length > 0) {
-        return this._actions[this._actions.length-1].isGuard();
-    }
-    return false;
-};
-
-
 Game_Battler.prototype.onTurnEnd = function() {
     this.clearResult();
     this.regenerateAll();
     this.removeStatesAuto(2);
 };
 
+_Game_Battler_initMembers = Game_Battler.prototype.initMembers
+Game_Battler.prototype.initMembers = function() {
+    _Game_Battler_initMembers.call(this);
+    this._guardCounter = 0;
+};
+
+Game_Battler.prototype.isGuard = function() {
+    return this._guardCounter > 0;
+}
+
+Game_Battler.prototype.setGuard = function() {
+    this._guardCounter = 3;
+}
+
+Game_Battler.prototype.decreaseGuard = function() {
+    this._guardCounter--;
+}
 
 Game_Actor.prototype.makeAutoBattleActions = function() {
     for (var i = 0; i < this.numActions(); i++) {
@@ -52,6 +60,9 @@ Game_Actor.prototype.makeActions = function() {
         this.makeConfusionActions();
     }
 };
+
+
+
 
 
 Game_Enemy.prototype.makeActions = function() {
