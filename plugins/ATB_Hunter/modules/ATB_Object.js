@@ -29,8 +29,21 @@ Game_Battler.prototype.setGuard = function() {
 }
 
 Game_Battler.prototype.decreaseGuard = function() {
-    this._guardCounter--;
-}
+    if (this._guardCounter > 0) {
+        const maxCounter = 4;
+        const minProb = 0.5;
+
+        const value = Math.min(this._guardCounter, maxCounter);
+        const probability = minProb + (1 - minProb) * ((value - 1) / (maxCounter - 1));
+
+        if (Math.random() < probability) {
+            this._guardCounter--;
+            console.log(`Guard counter decreased to: ${this._guardCounter} (p=${(probability * 100).toFixed(0)}%)`);
+        } else {
+            console.log(`Guard counter remains at: ${this._guardCounter} (p=${(probability * 100).toFixed(0)}%)`);
+        }
+    }
+};
 
 Game_Actor.prototype.makeAutoBattleActions = function() {
     for (var i = 0; i < this.numActions(); i++) {
