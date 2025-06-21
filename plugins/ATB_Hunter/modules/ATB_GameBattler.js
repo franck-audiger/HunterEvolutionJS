@@ -28,9 +28,7 @@
     };
 
     Game_Battler.prototype.onAtbReady = function() {
-        console.log("ATB is ready for " + this.name());
         if(this.isActor()){
-            console.log("Actor " + this.name() + " is ready for input.");
             this.setActionState('inputting');
             BattleManager.getReadyActorsToInput().push(this);
         } else {

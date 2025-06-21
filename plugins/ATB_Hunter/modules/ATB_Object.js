@@ -5,8 +5,13 @@ Game_Battler.prototype.performActionStart = function(action) {};
 Game_Battler.prototype.performActionEnd = function() {};
 
 Game_Battler.prototype.isGuardWaiting = function() {
-    if (this.isWaiting()) {
-        return this.getLastAction().isGuard();
+    return this.isGuard();
+};
+
+
+Game_Battler.prototype.isGuard = function() {
+    if (this._actions.length > 0) {
+        return this._actions[this._actions.length-1].isGuard();
     }
     return false;
 };

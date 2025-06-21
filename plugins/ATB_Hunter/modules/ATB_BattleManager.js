@@ -47,7 +47,7 @@ BattleManager.initMembers = function() {
 };
 
 BattleManager.getActorForAction = function() {
-    if(!this._actorForAction){        
+    if(!this._actorForAction){
         this._actorForAction = [];
     }
     return this._actorForAction;
@@ -210,7 +210,6 @@ BattleManager.update = function() {
                 } else if (this.getReadyActorsToAction().length - 1 >= this._actionInputIndex) {
                     //Executer un action
                     var actor = this.getCurrentActionActor()
-                    console.log(actor);
                     var action = null;
                     if(actor.isActor()){
                         action = actor.inputtingAction();
@@ -231,7 +230,6 @@ BattleManager.update = function() {
                 }
                 break;
             case "actions":
-                console.log("Actions step : " + this.getReadyActionToExecute().length);
                 if(this.getReadyActionToExecute().length - 1 >= this._actionExecuteIndex){
                     var subject = this.getActorForAction()[this._actionExecuteIndex]
                     var action = this.getReadyActionToExecute()[this._actionExecuteIndex]
@@ -242,7 +240,6 @@ BattleManager.update = function() {
                     this._step = 'doAction';
                     subject.useItem(action.item());
                     action.applyGlobal();
-                    this.refreshStatus();
                     this._logWindow.startAction(subject, action, targets);
                 }
                 break;
@@ -251,7 +248,7 @@ BattleManager.update = function() {
                 var subject = this.getActorForAction()[this._actionExecuteIndex]
                 this._logWindow.endAction(subject);
                 subject.setActionState("undecided");
-                subject.onTurnEnd();
+                subject.clearStates();
                 this._actionExecuteIndex++;
                 this._step = "init";
                 break
@@ -273,6 +270,11 @@ BattleManager.update = function() {
 BattleManager.invokeAction = function() {
     var targets = this.getTargetForAction()[this._actionExecuteIndex]
     var subject = this.getActorForAction()[this._actionExecuteIndex]
+    if(subject.isActor()){
+        subject = $gameParty.members().find(actor => actor.index() === subject.index());
+    } else {
+        subject = $gameTroop.members().find(troop => troop.index() === subject.index());
+    }
     this._logWindow.push('pushBaseLine');
     this.invokeNormalAction();
     subject.setLastTarget(targets[targets.length - 1]);
@@ -286,9 +288,9 @@ BattleManager.invokeNormalAction = function() {
     var targets = this.getTargetForAction()[this._actionExecuteIndex]
     var subject = this.getActorForAction()[this._actionExecuteIndex]
     for(target of targets) {
-        var realTargets = this.applySubstitute(target);
-        action.apply(realTargets);
-        this._logWindow.displayActionResults(subject, realTargets);
+        var realTarget = this.applySubstitute(target);
+        action.apply(realTarget);
+        this._logWindow.displayActionResults(subject, realTarget);
     }
 };
 
