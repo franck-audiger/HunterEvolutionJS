@@ -12,6 +12,7 @@
       'ATB_GameBattler.js',
       'ATB_BattleManager.js',
       'ATB_Windows.js',
+      'ATB_Object.js',
       'ATB_Scene.js'
     ];
   
@@ -26,7 +27,6 @@
     // Extension de Window_BattleStatus pour afficher la jauge ATB
     var _Window_BattleStatus_drawGaugeArea = Window_BattleStatus.prototype.drawGaugeArea;
     Window_BattleStatus.prototype.drawGaugeArea = function(rect, actor) {
-        console.log("drawGaugeArea called for actor: " + actor.name());
       _Window_BattleStatus_drawGaugeArea.call(this, rect, actor);
   
       var gaugeX = rect.x + 0;
@@ -38,7 +38,6 @@
   
     Window_BattleStatus.prototype.drawAtbGauge = function(actor, x, y, width) {
       var atbRate = actor.atb() / 100;
-      console.log("actor.atb() : " + actor.atb())
       this.drawGauge(x, y+5, width, atbRate, this.textColor(6), this.textColor(0));
     };
 

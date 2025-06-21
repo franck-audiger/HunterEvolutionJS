@@ -8,5 +8,5 @@ var $plugins =
 {"name":"CaptureVideoPlayer","status":true,"description":"Lecture vidéo personnalisée après délai - CaptureMaster - v1.0","parameters":{}},
 {"name":"ZQSDMapper","status":true,"description":"Active les touches ZQSD pour le déplacement du joueur (support AZERTY) [Hunter x Hunter Game].","parameters":{}},
 {"name":"ShowSign","status":true,"description":"Affiche un panneau directionnel sous forme de fenêtre de type dialogue semi-transparente et bloque le mouvement jusqu'à validation. [Hunter x Hunter Game]","parameters":{}},
-{"name":"ATB_Hunter_Core","status":false,"description":"[HUNTERxATB] Plugin central ATB en fichiers séparés - v1.0","parameters":{}}
+{"name":"ATB_Hunter_Core","status":true,"description":"[HUNTERxATB] Plugin central ATB en fichiers séparés - v1.0","parameters":{}}
 ];

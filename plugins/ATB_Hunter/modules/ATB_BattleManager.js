@@ -39,13 +39,57 @@ BattleManager.initMembers = function() {
     this._inputActorsIndex = 0;
     this._readyActorsToAction = [];
     this._actionInputIndex = 0;
+    this._readyActionToExecute = [];
+    this._targetForAction = [];
+    this._actorForAction = [];
+    this._actionExecuteIndex = 0;
     this._step = "init";
+};
+
+BattleManager.getActorForAction = function() {
+    if(!this._actorForAction){        
+        this._actorForAction = [];
+    }
+    return this._actorForAction;
+};
+
+BattleManager.getTargetForAction = function() {
+    if(!this._targetForAction){        
+        this._targetForAction = [];
+    }
+    return this._targetForAction;
+};
+
+BattleManager.getReadyActionToExecute = function() {
+    if(!this._readyActionToExecute){        
+        this._readyActionToExecute = [];
+    }
+    return this._readyActionToExecute;
+};
+
+BattleManager.getReadyActorsToAction = function() {
+    if(!this._readyActorsToAction){
+        this._readyActorsToAction = [];
+    }
+    return this._readyActorsToAction;
+};
+
+
+BattleManager.getReadyActorsToInput = function() {
+    if(!this._readyActorsToInput){
+        this._readyActorsToInput = [];
+    }
+    return this._readyActorsToInput;
+};
+
+BattleManager.isAborting = function() {
+    return this._phase === 'aborting';
 };
 
 
 BattleManager.isBattleEnd = function() {
     //A mettre vrai quand les sprites doivent s'adapter à la fin du combat
-    return false;
+    return this._step == "finished";;
 };
 
 BattleManager.isEscaped = function() {
@@ -147,11 +191,11 @@ BattleManager.updateAtbTick = function() {
 };
 
 BattleManager.getCurrentInputActor = function() {
-    return this._inputActorsIndex < this._readyActorsToInput.length ? this._readyActorsToInput[this._inputActorsIndex] : null;
+    return this._inputActorsIndex < this.getReadyActorsToInput().length ? this.getReadyActorsToInput()[this._inputActorsIndex] : null;
 }
 
 BattleManager.getCurrentActionActor = function() {
-    return this._actionInputIndex < this._readyActorsToAction.length ? this._readyActorsToAction[this._actionInputIndex] : null;
+    return this._actionInputIndex < this.getReadyActorsToAction().length ? this.getReadyActorsToAction()[this._actionInputIndex] : null;
 }
 
 BattleManager.update = function() {
@@ -159,75 +203,95 @@ BattleManager.update = function() {
         this.updateAtbTick();
         switch (this._step) {
             case "init":
-                if(this._readyActorsToInput.length - 1 >= this._inputActorsIndex){
+                if(this.getReadyActorsToInput().length - 1 >= this._inputActorsIndex){
+                    this.getCurrentInputActor().makeActions();
                     SceneManager._scene.startActorCommandSelection(this.getCurrentInputActor());
                     this._step = "input";
-                } else if (this._readyActorsToAction.length - 1 >= this._actionInputIndex) {
+                } else if (this.getReadyActorsToAction().length - 1 >= this._actionInputIndex) {
                     //Executer un action
                     var actor = this.getCurrentActionActor()
-                    var action = actor.inputtingAction();
-                    actor.useItem(action.item());
+                    console.log(actor);
+                    var action = null;
+                    if(actor.isActor()){
+                        action = actor.inputtingAction();
+                        actor.useItem(action.item());
+                    } else {
+                        action = actor.getLastAction();
+                    }
                     this._step = "actions";
-                    var target = action._targetIndex
-                    
-                    actor.makeActions();
-                    
-                    if (!action.needsSelection()) {
-                        if(action.isForAll()){
-                            action.setTarget($gameTroop.aliveMembers()[0]);
-                            action.makeTargets()
-                            for(let i = 1; i < action.numTargets(); i++){
-                                var newAction = new Game_Action(action)
-                                newAction.setTarget($gameTroop.aliveMembers()[i]);
-                                newAction.makeTargets()
-                                this._actions.push(newAction);
-                            }
-                        } else {
-                            console.log("action.numTargets() : "+ action.numTargets())
-                        }
-                    } 
+                    var targets = action.makeTargets();
+                    this.getTargetForAction().push(targets);
+                    this.getReadyActionToExecute().push(action);
+                    this.getActorForAction().push(actor);
+                    this._actionInputIndex++;
                     action.applyGlobal();
                     this.refreshStatus();
-                } else {
-                    console.log("Nothing to do")
+                } else if (this.getReadyActionToExecute().length - 1 >= this._actionExecuteIndex){
+                    this._step = "actions";
                 }
                 break;
             case "actions":
-                if(this._readyActorsToAction.length - 1 >= this._actionInputIndex){
-                    console.log("treat action")
-                    let target = $gameTroop.members()[ this.getCurrentActionActor().inputtingAction()._targetIndex];
-                    if (target) {
-                        this.invokeAction(this.getCurrentActionActor(), target);
+                console.log("Actions step : " + this.getReadyActionToExecute().length);
+                if(this.getReadyActionToExecute().length - 1 >= this._actionExecuteIndex){
+                    var subject = this.getActorForAction()[this._actionExecuteIndex]
+                    var action = this.getReadyActionToExecute()[this._actionExecuteIndex]
+                    subject.setActionState("acting");
+                    subject.performAction(action);
+
+                    var targets = this.getTargetForAction()[this._actionExecuteIndex]
+                    this._step = 'doAction';
+                    subject.useItem(action.item());
+                    action.applyGlobal();
+                    this.refreshStatus();
+                    this._logWindow.startAction(subject, action, targets);
+                    if(!subject.isActor()){
+                        this._logWindow.performDamage(target)
                     }
-                    this._step = "init";
                 }
                 break;
+            case "doAction":
+                this.invokeAction();
+                var subject = this.getActorForAction()[this._actionExecuteIndex]
+                this._logWindow.endAction(subject);
+                subject.setActionState("undecided");
+                this._actionExecuteIndex++;
+                this._step = "init";
+                break
             case "input":
                 break;  
+            case "toClosed":
+                this.updateBattleEnd();
+                break;  
+        } 
+    } else {
+        if(!this.isBusy() ){
+            if(this._step == "finished"){
+                this.updateBattleEnd();
+            }
         }
     }
 };
 
-BattleManager.invokeAction = function(subject, target) {
+BattleManager.invokeAction = function() {
+    var targets = this.getTargetForAction()[this._actionExecuteIndex]
+    var subject = this.getActorForAction()[this._actionExecuteIndex]
     this._logWindow.push('pushBaseLine');
-    if (Math.random() < this.getCurrentActionActor().inputtingAction().itemCnt(target)) {
-        this.invokeCounterAttack(subject, target);
-    } else if (Math.random() < this.getCurrentActionActor().inputtingAction().itemMrf(target)) {
-        this.invokeMagicReflection(subject, target);
-    } else {
-        this.invokeNormalAction(subject, target);
-    }
-    subject.setLastTarget(target);
+    this.invokeNormalAction();
+    subject.setLastTarget(targets[targets.length - 1]);
     this._logWindow.push('popBaseLine');
-    this.getCurrentActionActor().resetAtb()
+    subject.resetAtb()
     this.refreshStatus();
-    this._actionInputIndex++;
 };
 
-BattleManager.invokeNormalAction = function(subject, target) {
-    var realTarget = this.applySubstitute(target);
-    this.getCurrentActionActor().inputtingAction().apply(realTarget);
-    this._logWindow.displayActionResults(subject, realTarget);
+BattleManager.invokeNormalAction = function() {
+    var action = this.getReadyActionToExecute()[this._actionExecuteIndex]
+    var targets = this.getTargetForAction()[this._actionExecuteIndex]
+    var subject = this.getActorForAction()[this._actionExecuteIndex]
+    for(target of targets) {
+        var realTargets = this.applySubstitute(target);
+        action.apply(realTargets);
+        this._logWindow.displayActionResults(subject, realTargets);
+    }
 };
 
 BattleManager.invokeCounterAttack = function(subject, target) {
@@ -257,23 +321,56 @@ BattleManager.applySubstitute = function(target) {
 };
 
 BattleManager.checkSubstitute = function(target) {
-    return target.isDying() && !this.getCurrentActionActor().inputtingAction().isCertainHit();
+    return target.isDying() && !this.getReadyActionToExecute()[this._actionExecuteIndex].isCertainHit();
 };
 
 BattleManager.updateEvent = function() {
-   /*  switch (this._phase) {
-        case 'start':
-        case 'turn':
-        case 'turnEnd':
-            if (this.isActionForced()) {
-                this.processForcedAction();
-                return true;
-            } else {
-                return this.updateEventMain();
-            }
-    } */
+    return this.updateEventMain()
+};
+
+BattleManager.updateEventMain = function() {
+    $gameTroop.updateInterpreter();
+    $gameParty.requestMotionRefresh();
+    if ($gameTroop.isEventRunning() || this.checkBattleEnd()) {
+        return true;
+    }
+    $gameTroop.setupBattleEvent();
+    if ($gameTroop.isEventRunning() || SceneManager.isSceneChanging()) {
+        return true;
+    }
     return false;
 };
+
+
+BattleManager.checkAbort = function() {
+    if ($gameParty.isEmpty() || this.isAborting()) {
+        SoundManager.playEscape();
+        this._escaped = true;
+        this.processAbort();
+    }
+    return false;
+};
+
+BattleManager.checkBattleEnd = function() {
+    if (this._step) {
+        if(this._step != "toClosed") {
+            if (this.checkAbort()) {
+                this._step = "toClosed"
+                return true;
+            } else if ($gameParty.isAllDead()) {
+                this.processDefeat();
+                this._step = "toClosed"
+                return true;
+            } else if ($gameTroop.isAllDead()) {
+                this.processVictory();
+                this._step = "toClosed"
+                return true;
+            }
+        }
+    }
+    return false;
+};
+
 
 BattleManager.isBusy = function() {
     return ($gameMessage.isBusy() || this._spriteset.isBusy() ||
@@ -331,7 +428,7 @@ BattleManager.processDefeat = function() {
 };
 
 BattleManager.endBattle = function(result) {
-    this._phase = 'battleEnd';
+    this.step = 'finished';
     if (this._eventCallback) {
         this._eventCallback(result);
     }

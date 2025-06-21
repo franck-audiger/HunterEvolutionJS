@@ -40,7 +40,8 @@ Scene_Battle.prototype.update = function() {
 };
 
 Scene_Battle.prototype.updateBattleProcess = function() {
-    if (!this.isAnyInputWindowActive() || BattleManager.isBattleEnd()) {
+    if (!this.isAnyInputWindowActive() || BattleManager.isAborting() ||
+            BattleManager.isBattleEnd()) {
         BattleManager.update();
     }
 };
@@ -220,7 +221,7 @@ Scene_Battle.prototype.commandFight = function() {
 
 Scene_Battle.prototype.commandEscape = function() {
     BattleManager.processEscape();
-    this.changeInputWindow();
+    this.endCommandSelection();
 };
 
 Scene_Battle.prototype.startActorCommandSelection = function() {
@@ -269,7 +270,7 @@ Scene_Battle.prototype.onActorOk = function() {
 
 Scene_Battle.prototype.endCommand = function() {
     BattleManager._step = "init";
-    BattleManager._readyActorsToAction.push(BattleManager.getCurrentInputActor())
+    BattleManager.getReadyActorsToAction().push(BattleManager.getCurrentInputActor())
     BattleManager._inputActorsIndex++;
     this.endCommandSelection();
 }
