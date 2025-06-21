@@ -4,6 +4,21 @@ Game_Battler.prototype.performActionStart = function(action) {};
 
 Game_Battler.prototype.performActionEnd = function() {};
 
+Game_Battler.prototype.isGuardWaiting = function() {
+    if (this.isWaiting()) {
+        return this.getLastAction().isGuard();
+    }
+    return false;
+};
+
+
+Game_Battler.prototype.onTurnEnd = function() {
+    this.clearResult();
+    this.regenerateAll();
+    this.removeStatesAuto(2);
+};
+
+
 Game_Actor.prototype.makeAutoBattleActions = function() {
     for (var i = 0; i < this.numActions(); i++) {
         var list = this.makeActionList();
@@ -17,8 +32,6 @@ Game_Actor.prototype.makeAutoBattleActions = function() {
         }
     }
 };
-
-
 
 Game_Actor.prototype.makeConfusionActions = function() {
     for (var i = 0; i < this.numActions(); i++) {
@@ -55,3 +68,4 @@ Game_Enemy.prototype.getLastAction = function() {
         return this.action(this.numActions() - 1);
     }
 }
+

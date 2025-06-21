@@ -244,6 +244,7 @@ Scene_Battle.prototype.commandSkill = function() {
 
 Scene_Battle.prototype.commandGuard = function() {
     BattleManager.getCurrentInputActor().inputtingAction().setGuard();
+    this.endCommand();
 };
 
 Scene_Battle.prototype.commandItem = function() {
@@ -350,6 +351,7 @@ Scene_Battle.prototype.onItemCancel = function() {
 };
 
 Scene_Battle.prototype.onSelectAction = function() {
+    console.log("onSelectAction");
     var action = BattleManager.getCurrentInputActor().inputtingAction();
     this._skillWindow.hide();
     this._itemWindow.hide();

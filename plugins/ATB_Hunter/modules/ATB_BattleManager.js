@@ -244,9 +244,6 @@ BattleManager.update = function() {
                     action.applyGlobal();
                     this.refreshStatus();
                     this._logWindow.startAction(subject, action, targets);
-                    if(!subject.isActor()){
-                        this._logWindow.performDamage(target)
-                    }
                 }
                 break;
             case "doAction":
@@ -254,6 +251,7 @@ BattleManager.update = function() {
                 var subject = this.getActorForAction()[this._actionExecuteIndex]
                 this._logWindow.endAction(subject);
                 subject.setActionState("undecided");
+                subject.onTurnEnd();
                 this._actionExecuteIndex++;
                 this._step = "init";
                 break
