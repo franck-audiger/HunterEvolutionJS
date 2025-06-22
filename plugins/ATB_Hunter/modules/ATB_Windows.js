@@ -27,3 +27,9 @@ Window_BattleStatus.prototype.drawAtbGauge = function(actor, x, y, width) {
     var atbRate = actor.atb() / 100;
     this.drawGauge(x, y+5, width, atbRate, this.textColor(6), this.textColor(0));
 };
+
+
+
+Window_BattleLog.prototype.displayGyoUse = function(subject) {
+    this.displayAffectedStatus(subject);
+};

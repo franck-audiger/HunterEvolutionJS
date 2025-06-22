@@ -252,6 +252,10 @@ BattleManager.update = function() {
                 var subject = this.getActorForAction()[this._actionExecuteIndex]
                 this._logWindow.endAction(subject);
                 subject.setActionState("undecided");
+                if(subject.isActor()){
+                    subject.applyGyo();
+                    this._logWindow.displayGyoUse(subject);
+                }
                 //subject.clearStates();
                 this._actionExecuteIndex++;
                 subject.decreaseGuard();

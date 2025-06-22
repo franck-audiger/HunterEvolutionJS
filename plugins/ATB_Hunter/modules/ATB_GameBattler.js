@@ -28,7 +28,7 @@
     };
 
     Game_Battler.prototype.onAtbReady = function() {
-        if(this.isActor()){
+        if(this.isActor() && this.isAlive()){
             this.setActionState('inputting');
             BattleManager.getReadyActorsToInput().push(this);
         } else {
