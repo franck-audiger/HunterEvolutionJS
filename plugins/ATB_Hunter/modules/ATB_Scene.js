@@ -244,7 +244,6 @@ Scene_Battle.prototype.commandSkill = function() {
 
 Scene_Battle.prototype.commandGuard = function() {
     BattleManager.getCurrentInputActor().inputtingAction().setGuard();
-    console.log(BattleManager.getCurrentInputActor())
     if(BattleManager.getCurrentInputActor().isActor()){
         BattleManager.getCurrentInputActor().setGuard()
     }

@@ -33,3 +33,18 @@ Window_BattleStatus.prototype.drawAtbGauge = function(actor, x, y, width) {
 Window_BattleLog.prototype.displayGyoUse = function(subject) {
     this.push('addText', "Gyo consomme du Nen pour " + subject.name() + "!");
 };
+
+
+Window_BattleLog.prototype.displayGuardFinished = function(subject) {
+    this.push('addText', "La garde de  "+ subject.name() + " est fini !");
+};
+
+Window_BattleLog.prototype.displayGuardDecrease = function(subject) {
+    this.push('addText', "La garde de  "+ subject.name() + " faibli !");
+};
+
+Window_BattleLog.prototype.displayGuardRemain = function(subject) {
+    this.push('addText', subject.name() + " conserve sa garde !");
+};
+
+

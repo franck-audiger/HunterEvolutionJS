@@ -38,9 +38,14 @@ Game_Battler.prototype.decreaseGuard = function() {
 
         if (Math.random() < probability) {
             this._guardCounter--;
-            console.log(`Guard counter decreased to: ${this._guardCounter} (p=${(probability * 100).toFixed(0)}%)`);
+            if(this._guardCounter == 0) {
+                BattleManager._logWindow.displayGuardFinished(this);
+            } else {
+                BattleManager._logWindow.displayGuardDecrease(this);
+            }
+
         } else {
-            console.log(`Guard counter remains at: ${this._guardCounter} (p=${(probability * 100).toFixed(0)}%)`);
+            BattleManager._logWindow.displayGuardRemain(this);
         }
     }
 };

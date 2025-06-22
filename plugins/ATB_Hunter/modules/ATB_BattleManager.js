@@ -231,7 +231,6 @@ BattleManager.update = function() {
                         action.applyGlobal();
                     } else {
                         this._actionInputIndex++;
-                        console.log("No action available");
                     }
                 } else if (this.getReadyActionToExecute().length - 1 >= this._actionExecuteIndex){
                     this._step = "actions";
