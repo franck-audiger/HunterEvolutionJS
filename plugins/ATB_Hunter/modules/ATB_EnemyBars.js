@@ -29,6 +29,13 @@ Sprite_Enemy.prototype.update = function() {
     if (this._enemy) {
         if($gameParty.aliveMembers().filter(member => member.isGyoActive()).length > 0) {
             this.updateBattleBars();
+            this._hpGaugeSprite.visible = true;
+            this._atbGaugeSprite.visible = true;
+        } else {
+            this._hpGaugeBitmap.clear();
+            this._atbGaugeBitmap.clear();
+            this._hpGaugeSprite.visible = false;
+            this._atbGaugeSprite.visible = false;
         }
     }
 };

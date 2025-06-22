@@ -221,14 +221,18 @@ BattleManager.update = function() {
                     } else {
                         action = actor.getLastAction();
                     }
-                    this._step = "actions";
-                    var targets = action.makeTargets();
-                    this.getTargetForAction().push(targets);
-                    this.getReadyActionToExecute().push(action);
-                    this.getActorForAction().push(actor);
-                    this._actionInputIndex++;
-                    action.applyGlobal();
-                    //this.refreshStatus();
+                    if(action){
+                        this._step = "actions";
+                        var targets = action.makeTargets();
+                        this.getTargetForAction().push(targets);
+                        this.getReadyActionToExecute().push(action);
+                        this.getActorForAction().push(actor);
+                        this._actionInputIndex++;
+                        action.applyGlobal();
+                    } else {
+                        this._actionInputIndex++;
+                        console.log("No action available");
+                    }
                 } else if (this.getReadyActionToExecute().length - 1 >= this._actionExecuteIndex){
                     this._step = "actions";
                 }
@@ -254,9 +258,10 @@ BattleManager.update = function() {
                 subject.setActionState("undecided");
                 if(subject.isActor()){
                     subject.applyGyo();
-                    this._logWindow.displayGyoUse(subject);
+                    if(subject.isGyoActive()) {
+                        this._logWindow.displayGyoUse(subject);
+                    }
                 }
-                //subject.clearStates();
                 this._actionExecuteIndex++;
                 subject.decreaseGuard();
                 this._step = "init";
@@ -301,10 +306,6 @@ BattleManager.invokeNormalAction = function() {
         action.apply(realTarget);
         this._logWindow.displayActionResults(subject, realTarget);
     }
-    /*if(action._item._dataClass == "skill" && action._item._itemId == 11){
-        subject.useGyo();
-        console.log("Gyo used")
-    }*/
 };
 
 BattleManager.invokeCounterAttack = function(subject, target) {

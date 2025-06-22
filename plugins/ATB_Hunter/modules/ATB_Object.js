@@ -47,13 +47,19 @@ Game_Battler.prototype.decreaseGuard = function() {
 
 Game_Actor.prototype.applyGyo = function() {
     if(this.isGyoActive()) {
-        console.log("Gyo is applied to actor: " + this._name);
-        this.mp -= 2;
+        this._mp -= 2;
     }
 }
 
 Game_Actor.prototype.isGyoActive = function() {
-    return this._states.contains(11);
+    return this._states.includes(11) 
+        && !this._states.includes(1) 
+        && !this._states.includes(4) 
+        && !this._states.includes(5) 
+        && !this._states.includes(7) 
+        && !this._states.includes(8) 
+        && !this._states.includes(9) 
+        && !this._states.includes(10);
 };
 
 Game_Actor.prototype.makeAutoBattleActions = function() {

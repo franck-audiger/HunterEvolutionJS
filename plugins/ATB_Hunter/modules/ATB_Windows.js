@@ -31,5 +31,5 @@ Window_BattleStatus.prototype.drawAtbGauge = function(actor, x, y, width) {
 
 
 Window_BattleLog.prototype.displayGyoUse = function(subject) {
-    this.displayAffectedStatus(subject);
+    this.push('addText', "Gyo consomme du Nen pour " + subject.name() + "!");
 };
