@@ -45,6 +45,11 @@ Game_Battler.prototype.decreaseGuard = function() {
     }
 };
 
+
+Game_Actor.prototype.isGyoActive = function() {
+    return this._states.contains(11);
+};
+
 Game_Actor.prototype.makeAutoBattleActions = function() {
     for (var i = 0; i < this.numActions(); i++) {
         var list = this.makeActionList();
@@ -73,10 +78,6 @@ Game_Actor.prototype.makeActions = function() {
         this.makeConfusionActions();
     }
 };
-
-
-
-
 
 Game_Enemy.prototype.makeActions = function() {
     Game_Battler.prototype.makeActions.call(this);

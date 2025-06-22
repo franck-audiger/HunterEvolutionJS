@@ -27,7 +27,9 @@ var _ATB_SpriteEnemy_update = Sprite_Enemy.prototype.update;
 Sprite_Enemy.prototype.update = function() {
     _ATB_SpriteEnemy_update.call(this);
     if (this._enemy) {
-        this.updateBattleBars();
+        if($gameParty.aliveMembers().filter(member => member.isGyoActive()).length > 0) {
+            this.updateBattleBars();
+        }
     }
 };
 

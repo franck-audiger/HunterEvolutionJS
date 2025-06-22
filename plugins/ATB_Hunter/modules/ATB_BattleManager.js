@@ -297,6 +297,10 @@ BattleManager.invokeNormalAction = function() {
         action.apply(realTarget);
         this._logWindow.displayActionResults(subject, realTarget);
     }
+    /*if(action._item._dataClass == "skill" && action._item._itemId == 11){
+        subject.useGyo();
+        console.log("Gyo used")
+    }*/
 };
 
 BattleManager.invokeCounterAttack = function(subject, target) {
