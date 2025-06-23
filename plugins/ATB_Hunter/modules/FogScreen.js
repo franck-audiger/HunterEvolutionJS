@@ -1,8 +1,8 @@
 
 const fogConfigs = {
-  13: { name: "Fog1", speedX: 0.7, speedY: 0.5, opacity: 160, restrictedVision: true, visionRadius: 150 },
-  18: { name: "Fog1", speedX: 0.7, speedY: 0.5, opacity: 160, restrictedVision: true, visionRadius: 110 },
-  19: { name: "Fog1", speedX: 0.7, speedY: 0.5, opacity: 160, restrictedVision: true, visionRadius: 80 },
+  13: { name: "Fog1", speedX: 0.7, speedY: 0.5, opacity: 160, restrictedVision: true, restrictedVisionOpacity: 0.93, visionRadius: 150 },
+  18: { name: "Fog1", speedX: 0.7, speedY: 0.5, opacity: 230, restrictedVision: true, restrictedVisionOpacity: 0.96, visionRadius: 110 },
+  19: { name: "Fog1", speedX: 0.7, speedY: 0.5, opacity: 300, restrictedVision: true, restrictedVisionOpacity: 0.98, visionRadius: 80 },
 };
 
 function createFogOverlay() {
@@ -60,7 +60,7 @@ function updateVisionOverlay() {
   const ctx = bitmap._context;
   const grad = ctx.createRadialGradient(px, py, radius, px, py, gradientRadius);
   grad.addColorStop(0, 'rgba(0, 0, 0, 0)');
-  grad.addColorStop(1, 'rgba(0, 0, 0, 0.98)');
+  grad.addColorStop(1, 'rgba(0, 0, 0, ' + config.restrictedVisionOpacity + ')');
 
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, bitmap.width, bitmap.height);
@@ -94,7 +94,7 @@ const _Scene_Battle_update = Scene_Battle.prototype.update;
 Scene_Battle.prototype.update = function() {
   _Scene_Battle_update.call(this);
   this.updateFogOverlay();
-  this.updateVisionOverlay();
+  ///this.updateVisionOverlay();
 };
 
 Scene_Map.prototype.createFogOverlay = createFogOverlay;
