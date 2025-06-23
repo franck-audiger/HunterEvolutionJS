@@ -14,7 +14,8 @@
       'ATB_Windows.js',
       'ATB_Object.js',
       'ATB_Scene.js',
-      'ATB_EnemyBars.js'
+      'ATB_EnemyBars.js',
+      'FogScreen.js'
     ];
   
     files.forEach(function(file) {
