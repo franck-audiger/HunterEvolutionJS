@@ -6,15 +6,8 @@
     19: { name: "Fog1", speedX: 0.7, speedY: 0.5, opacity: 160, restrictedVision: true, visionRadius: 80 },
   };
 
-  // === POUR LA MAP ===
-  const _Scene_Map_createDisplayObjects = Scene_Map.prototype.createDisplayObjects;
-  Scene_Map.prototype.createDisplayObjects = function() {
-    _Scene_Map_createDisplayObjects.call(this);
-    this.createFogOverlay();
-    this.createVisionOverlay();
-  };
 
-  Scene_Map.prototype.createFogOverlay = function() {
+  function createFogOverlay() {
     const config = fogConfigs[$gameMap.mapId()];
     if (!config) return;
 
@@ -26,9 +19,9 @@
     this._fogOverlay.fogSpeedY = config.speedY || 0;
 
     this._spriteset.addChild(this._fogOverlay);
-  };
+  }
 
-  Scene_Map.prototype.createVisionOverlay = function() {
+  function createVisionOverlay() {
     const config = fogConfigs[$gameMap.mapId()];
     if (!config || !config.restrictedVision) return;
 
@@ -38,31 +31,31 @@
     this._visionBitmap = new Bitmap(width, height);
     this._visionOverlay = new Sprite(this._visionBitmap);
     this._spriteset.addChild(this._visionOverlay);
-  };
+  }
 
-  const _Scene_Map_update = Scene_Map.prototype.update;
-  Scene_Map.prototype.update = function() {
-    _Scene_Map_update.call(this);
-    this.updateFogOverlay();
-    this.updateVisionOverlay();
-  };
-
-  Scene_Map.prototype.updateFogOverlay = function() {
+  function updateFogOverlay() {
     if (this._fogOverlay) {
       this._fogOverlay.origin.x += this._fogOverlay.fogSpeedX;
       this._fogOverlay.origin.y += this._fogOverlay.fogSpeedY;
     }
-  };
+  }
 
-  Scene_Map.prototype.updateVisionOverlay = function() {
+  function updateVisionOverlay() {
     const config = fogConfigs[$gameMap.mapId()];
     if (!config || !config.restrictedVision || !this._visionOverlay) return;
 
     const bitmap = this._visionBitmap;
     bitmap.clear();
 
-    const px = $gamePlayer.screenX();
-    const py = $gamePlayer.screenY() - 16;
+    let px, py;
+    if (this instanceof Scene_Battle) {
+      px = Graphics.width / 2;
+      py = Graphics.height / 2;
+    } else {
+      px = $gamePlayer.screenX();
+      py = $gamePlayer.screenY() - 16;
+    }
+
     const radius = config.visionRadius || 30;
     const gradientRadius = radius + 90;
 
@@ -74,7 +67,46 @@
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, bitmap.width, bitmap.height);
     bitmap._setDirty();
+  }
+
+  // === MAP SETUP ===
+  const _Scene_Map_createDisplayObjects = Scene_Map.prototype.createDisplayObjects;
+  Scene_Map.prototype.createDisplayObjects = function() {
+    _Scene_Map_createDisplayObjects.call(this);
+    this.createFogOverlay();
+    this.createVisionOverlay();
   };
 
+  const _Scene_Map_update = Scene_Map.prototype.update;
+  Scene_Map.prototype.update = function() {
+    _Scene_Map_update.call(this);
+    this.updateFogOverlay();
+    this.updateVisionOverlay();
+  };
+
+  // === BATTLE SETUP ===
+  const _Scene_Battle_createDisplayObjects = Scene_Battle.prototype.createDisplayObjects;
+  Scene_Battle.prototype.createDisplayObjects = function() {
+    _Scene_Battle_createDisplayObjects.call(this);
+    this.createFogOverlay();
+    this.createVisionOverlay();
+  };
+
+  const _Scene_Battle_update = Scene_Battle.prototype.update;
+  Scene_Battle.prototype.update = function() {
+    _Scene_Battle_update.call(this);
+    this.updateFogOverlay();
+    this.updateVisionOverlay();
+  };
+
+  Scene_Map.prototype.createFogOverlay = createFogOverlay;
+  Scene_Map.prototype.createVisionOverlay = createVisionOverlay;
+  Scene_Map.prototype.updateFogOverlay = updateFogOverlay;
+  Scene_Map.prototype.updateVisionOverlay = updateVisionOverlay;
+
+  Scene_Battle.prototype.createFogOverlay = createFogOverlay;
+  Scene_Battle.prototype.createVisionOverlay = createVisionOverlay;
+  Scene_Battle.prototype.updateFogOverlay = updateFogOverlay;
+  Scene_Battle.prototype.updateVisionOverlay = updateVisionOverlay;
 
 })();
