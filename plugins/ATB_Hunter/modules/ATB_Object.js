@@ -8,6 +8,11 @@ Game_Battler.prototype.isGuardWaiting = function() {
     return this.isGuard();
 };
 
+Game_Battler.prototype.guardRatio = function() {
+    return this._guardCounter;
+};
+
+
 Game_Battler.prototype.onTurnEnd = function() {
     this.clearResult();
     this.regenerateAll();
@@ -49,6 +54,15 @@ Game_Battler.prototype.decreaseGuard = function() {
         }
     }
 };
+
+
+Game_Action.prototype.applyGuard = function(damage, target) {
+    return damage / (damage > 0 && target.isGuard() ? 2 * target.grd * target.guardRatio() : 1);
+};
+
+Game_Actor.prototype.clearGuard = function() {
+    this._guardCounter = 0;
+}
 
 Game_Actor.prototype.applyGyo = function() {
     if(this.isGyoActive()) {

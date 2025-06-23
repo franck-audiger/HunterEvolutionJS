@@ -453,6 +453,9 @@ BattleManager.endBattle = function(result) {
 };
 
 BattleManager.updateBattleEnd = function() {
+    $gameParty.members().forEach(function(actor) {
+        actor.clearGuard();
+    });
     if (this.isBattleTest()) {
         AudioManager.stopBgm();
         SceneManager.exit();
