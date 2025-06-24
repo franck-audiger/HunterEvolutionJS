@@ -10,7 +10,7 @@ window.TextManagerEx = {
     ConfigManager.language = lang;
     ConfigManager.save();
     return this.loadTexts().then(() => {
-      SceneManager.goto(Scene_Map); // ou une scène custom
+      // SceneManager.goto(Scene_Map); // ou une scène custom
     });
   },
 
@@ -51,12 +51,12 @@ Window_Options.prototype.addGeneralOptions = function() {
 };
 
 const _Window_Options_statusText = Window_Options.prototype.statusText;
-Window_Options.prototype.statusText = function(symbol) {
+Window_Options.prototype.statusText = function(index) {
+  const symbol = this.commandSymbol(index);
   if (symbol === "language") {
-    const current = ConfigManager.language || "fr";
-    return languageLabels[current] || current;
+    return `${languageLabels["fr"]}/${languageLabels["en"]}`;
   }
-  return _Window_Options_statusText.call(this, symbol);
+  return _Window_Options_statusText.call(this, index);
 };
 
 const _Window_Options_getConfigValue = Window_Options.prototype.getConfigValue;
