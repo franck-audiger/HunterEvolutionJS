@@ -2,71 +2,116 @@ const parameters = PluginManager.parameters('MultiLang');
 const defaultLang = parameters['Language'] || 'fr';
 
 window.TextManagerEx = {
-_data: {},
-_language: defaultLang,
+  _data: {},
+  _language: defaultLang,
 
-setLanguage(lang) {
+  setLanguage(lang) {
     this._language = lang;
-    return this.loadTexts();
-},
+    ConfigManager.language = lang;
+    ConfigManager.save();
+    return this.loadTexts().then(() => {
+      SceneManager.goto(Scene_Map); // ou une scène custom
+    });
+  },
 
-loadTexts() {
+  loadTexts() {
     const path = `data/lang/texts_${this._language}.json`;
     return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', path);
-    xhr.overrideMimeType('application/json');
-    xhr.onload = () => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', path);
+      xhr.overrideMimeType('application/json');
+      xhr.onload = () => {
         if (xhr.status < 400) {
-        this._data = JSON.parse(xhr.responseText);
-        resolve();
+          this._data = JSON.parse(xhr.responseText);
+          resolve();
         } else {
-        reject(`Impossible de charger ${path}`);
+          reject(`Impossible de charger ${path}`);
         }
-    };
-    xhr.onerror = () => reject(`Erreur réseau sur ${path}`);
-    xhr.send();
+      };
+      xhr.onerror = () => reject(`Erreur réseau sur ${path}`);
+      xhr.send();
     });
-},
+  },
 
-
-t(key) {
+  t(key) {
     return this._data[key] || `[${key}]`;
-}
+  }
 };
 
-TextManagerEx.setLanguage("en").then(() => {
-  if ($gamePlayer && $gamePlayer._mapId) {
-    SceneManager.goto(Scene_Map);
-  } else {
-    DataManager.setupNewGame();
-    SceneManager.goto(Scene_Map);
-  }
-});
+const availableLanguages = ["fr", "en"];
+const languageLabels = {
+  "fr": "Français",
+  "en": "English"
+};
 
-// Chargement au démarrage
+const _Window_Options_addGeneralOptions = Window_Options.prototype.addGeneralOptions;
+Window_Options.prototype.addGeneralOptions = function() {
+  _Window_Options_addGeneralOptions.call(this);
+  this.addCommand("Langue", "language");
+};
+
+const _Window_Options_statusText = Window_Options.prototype.statusText;
+Window_Options.prototype.statusText = function(symbol) {
+  if (symbol === "language") {
+    const current = ConfigManager.language || "fr";
+    return languageLabels[current] || current;
+  }
+  return _Window_Options_statusText.call(this, symbol);
+};
+
+const _Window_Options_getConfigValue = Window_Options.prototype.getConfigValue;
+Window_Options.prototype.getConfigValue = function(symbol) {
+  if (symbol === "language") {
+    return ConfigManager.language;
+  }
+  return _Window_Options_getConfigValue.call(this, symbol);
+};
+
+const _Window_Options_changeValue = Window_Options.prototype.changeValue;
+Window_Options.prototype.changeValue = function(symbol, value) {
+  if (symbol === "language") {
+    const index = availableLanguages.indexOf(ConfigManager.language);
+    const next = availableLanguages[(index + 1) % availableLanguages.length];
+    ConfigManager.language = next;
+    this.redrawItem(this.findSymbol(symbol));
+    SoundManager.playCursor();
+    TextManagerEx.setLanguage(next);
+    return;
+  }
+  _Window_Options_changeValue.call(this, symbol, value);
+};
+
+const _ConfigManager_makeData = ConfigManager.makeData;
+ConfigManager.makeData = function() {
+  const config = _ConfigManager_makeData.call(this);
+  config.language = this.language || "fr";
+  return config;
+};
+
+const _ConfigManager_applyData = ConfigManager.applyData;
+ConfigManager.applyData = function(config) {
+  _ConfigManager_applyData.call(this, config);
+  this.language = config.language || "fr";
+};
+
 const _Scene_Boot_start = Scene_Boot.prototype.start;
 Scene_Boot.prototype.start = function() {
-const originalStart = _Scene_Boot_start.bind(this);
-TextManagerEx.loadTexts().then(() => {
+  const originalStart = _Scene_Boot_start.bind(this);
+  TextManagerEx.loadTexts().then(() => {
     originalStart();
-}).catch(err => {
+  }).catch(err => {
     console.error(err);
     originalStart();
-});
+  });
 };
 
-
-
-// Réécriture du système d'échappement de texte
 const _Window_Base_convertEscapeCharacters = Window_Base.prototype.convertEscapeCharacters;
 Window_Base.prototype.convertEscapeCharacters = function(text) {
-    text = text.replace(/langText\[(.+?)\]/gi, (_, key) => {
-        return TextManagerEx.t(key);
-    });
-    text = _Window_Base_convertEscapeCharacters.call(this, text);
-    console.log("text : " + text)
-    return text;
+  text = text.replace(/langText\[(.+?)\]/gi, (_, key) => {
+    return TextManagerEx.t(key);
+  });
+  text = _Window_Base_convertEscapeCharacters.call(this, text);
+  return text;
 };
 
 
