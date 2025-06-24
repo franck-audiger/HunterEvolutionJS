@@ -2,6 +2,22 @@ Window_Base.prototype.fittingHeight = function(numLines) {
     return numLines * (this.lineHeight()+2) + this.standardPadding() * 2;
 };
 
+var _ATB_drawBasicArea = Window_BattleStatus.prototype.drawBasicArea;
+Window_BattleStatus.prototype.drawBasicArea = function(rect, actor) {
+    _ATB_drawBasicArea.call(this, rect, actor);
+    this.drawActorGuardCount(actor, rect.x, rect.y);
+};
+
+Window_BattleStatus.prototype.drawActorGuardCount = function(actor, x, y) {
+    var guard = actor.guardRatio ? actor.guardRatio() : 0;
+    if (guard > 0) {
+        this.contents.fontSize -= 8;
+        var nameWidth = this.textWidth(actor.name());
+        this.drawText(guard, x + nameWidth + 4, y - this.lineHeight() / 4, 48);
+        this.resetFontSettings();
+    }
+};
+
 
 Window_BattleStatus.prototype.drawAtbGauge = function(actor, x, y, width) {
     var atbRate = actor.atb() / 100;
