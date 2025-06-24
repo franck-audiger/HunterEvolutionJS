@@ -26,17 +26,12 @@ Window_ActorCommand.prototype.lineHeight = function() {
 Window_BattleStatus.prototype.initialize = function() {
     var width = this.windowWidth();
     var height = this.windowHeight();
-    var x = 0;
-    var y = 0;
+    var x = 0-Graphics.boxWidth;
+    var y = Graphics.boxHeight - height;
     Window_Selectable.prototype.initialize.call(this, x, y, width, height);
     this.refresh();
     this.openness = 0;
 };
-
-Window_BattleStatus.prototype.windowWidth = function() {
-    return Graphics.boxWidth;
-};
-
 
 var _ATB_drawBasicArea = Window_BattleStatus.prototype.drawBasicArea;
 Window_BattleStatus.prototype.drawBasicArea = function(rect, actor) {
@@ -78,7 +73,6 @@ Window_BattleStatus.prototype.drawGaugeArea = function(rect, actor) {
     var gaugeX = rect.x + 0;
     var gaugeY = rect.y + rect.height - this.lineHeight();
     var gaugeWidth = rect.width;
-
     this.drawAtbGauge(actor, gaugeX, gaugeY, gaugeWidth);
 };
 

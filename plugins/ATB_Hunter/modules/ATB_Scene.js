@@ -87,16 +87,40 @@ Scene_Battle.prototype.updateStatusWindow = function() {
         this._statusWindow.open();
     }
 };
-
+/*
 Scene_Battle.prototype.updateWindowPositions = function() {
     var win = this._statusWindow;
     if(this._actorCommandWindow.active){
         win.x = 192;
     } else {
-        win.x = 192/2;
+        win.x = 0;
+    }
+    var statusX = 0;
+    if (win.x < statusX) {
+        win += 16;
+        if (win > statusX) {
+            win = statusX;
+        }
+    }
+    if (win > statusX) {
+        win -= 16;
+        if (win < statusX) {
+            win = statusX;
+        }
     }
     win.refresh();
+};
+*/
+Scene_Battle.prototype.updateWindowPositions = function() {
     var statusX = 0;
+    var statusWidth = 0;
+    if (this._actorCommandWindow.isOpen()) {
+        statusX = this._actorCommandWindow.width;
+        statusWidth = Graphics.boxWidth-statusX;
+    } else {
+        statusX = 0;
+        statusWidth = Graphics.boxWidth;
+    }
     if (this._statusWindow.x < statusX) {
         this._statusWindow.x += 16;
         if (this._statusWindow.x > statusX) {
@@ -109,6 +133,26 @@ Scene_Battle.prototype.updateWindowPositions = function() {
             this._statusWindow.x = statusX;
         }
     }
+    if(this._statusWindow.width < statusWidth) {
+        this._statusWindow.width += 16;
+        if (this._statusWindow.width > statusWidth) {
+            this._statusWindow.width = statusWidth;
+        }
+    }
+    if (this._statusWindow.width > statusWidth) {
+        this._statusWindow.width -= 16;
+        if (this._statusWindow.width < statusWidth) {
+            this._statusWindow.width = statusWidth;
+        }
+    }
+    this._actorWindow.x = this._statusWindow.x;
+    this._actorWindow.width = this._statusWindow.width;
+    this._actorWindow.contents.clear();      // Efface l'ancien contenu
+    this._actorWindow.createContents();
+    this._actorWindow.refresh();
+    this._statusWindow.contents.clear();      // Efface l'ancien contenu
+    this._statusWindow.createContents();
+    this._statusWindow.refresh();
 };
 
 Scene_Battle.prototype.createDisplayObjects = function() {
