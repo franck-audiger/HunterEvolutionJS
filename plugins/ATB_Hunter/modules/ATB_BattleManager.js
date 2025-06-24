@@ -251,8 +251,12 @@ BattleManager.update = function() {
                 }
                 break;
             case "doAction":
-                this.invokeAction();
                 var subject = this.getActorForAction()[this._actionExecuteIndex]
+                var action = this.getReadyActionToExecute()[this._actionExecuteIndex]
+                this.invokeAction();
+                if(!action.isGuard()) {
+                    subject.decreaseGuard();
+                }
                 this._logWindow.endAction(subject);
                 subject.setActionState("undecided");
                 if(subject.isActor()){
@@ -262,7 +266,6 @@ BattleManager.update = function() {
                     }
                 }
                 this._actionExecuteIndex++;
-                subject.decreaseGuard();
                 this._step = "init";
                 break
             case "input":

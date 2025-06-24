@@ -4769,7 +4769,7 @@ Window_BattleLog.prototype.maxLines = function() {
 };
 
 Window_BattleLog.prototype.lineDisplayDuration = function() {
-    return 240;
+    return 360;
 };
 
 Window_BattleLog.prototype.createBackBitmap = function() {

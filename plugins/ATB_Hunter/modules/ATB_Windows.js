@@ -13,7 +13,7 @@ Window_BattleStatus.prototype.drawActorGuardCount = function(actor, x, y) {
     if (guard > 0) {
         this.contents.fontSize -= 8;
         var nameWidth = this.textWidth(actor.name());
-        var baseX = x + nameWidth + 4;
+        var baseX = x + nameWidth + 12;
         var baseY = y - this.lineHeight() / 4;
         var iconIndex = 11; // Icon at grid position (0,11)
         this.drawIcon(iconIndex, baseX, baseY);
