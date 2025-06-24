@@ -15,6 +15,7 @@
       'ATB_Object.js',
       'ATB_Scene.js',
       'ATB_EnemyBars.js',
+      'LangText.js',
       'FogScreen.js'
     ];
   
