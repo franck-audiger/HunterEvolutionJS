@@ -2,6 +2,12 @@ Window_Base.prototype.fittingHeight = function(numLines) {
     return numLines * (this.lineHeight()+2) + this.standardPadding() * 2;
 };
 
+// Increase the height of each battle status row so icons fit correctly.
+var _BS_lineHeight = Window_Base.prototype.lineHeight;
+Window_BattleStatus.prototype.lineHeight = function() {
+    return _BS_lineHeight.call(this) + 8;
+};
+
 var _ATB_drawBasicArea = Window_BattleStatus.prototype.drawBasicArea;
 Window_BattleStatus.prototype.drawBasicArea = function(rect, actor) {
     _ATB_drawBasicArea.call(this, rect, actor);
