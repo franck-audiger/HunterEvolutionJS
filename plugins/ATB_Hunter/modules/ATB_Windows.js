@@ -13,7 +13,11 @@ Window_BattleStatus.prototype.drawActorGuardCount = function(actor, x, y) {
     if (guard > 0) {
         this.contents.fontSize -= 8;
         var nameWidth = this.textWidth(actor.name());
-        this.drawText(guard, x + nameWidth + 4, y - this.lineHeight() / 4, 48);
+        var baseX = x + nameWidth + 4;
+        var baseY = y - this.lineHeight() / 4;
+        var iconIndex = 11; // Icon at grid position (0,11)
+        this.drawIcon(iconIndex, baseX, baseY);
+        this.drawText(guard, baseX + Window_Base._iconWidth, baseY, 48);
         this.resetFontSettings();
     }
 };
