@@ -4741,6 +4741,7 @@ Window_BattleLog.prototype.initialize = function() {
     Window_Selectable.prototype.initialize.call(this, 0, 0, width, height);
     this.opacity = 0;
     this._lines = [];
+    this._lineDurations = [];
     this._methods = [];
     this._waitCount = 0;
     this._waitMode = '';
@@ -4767,6 +4768,10 @@ Window_BattleLog.prototype.maxLines = function() {
     return 10;
 };
 
+Window_BattleLog.prototype.lineDisplayDuration = function() {
+    return 240;
+};
+
 Window_BattleLog.prototype.createBackBitmap = function() {
     this._backBitmap = new Bitmap(this.width, this.height);
 };
@@ -4791,6 +4796,7 @@ Window_BattleLog.prototype.isBusy = function() {
 };
 
 Window_BattleLog.prototype.update = function() {
+    this.updateLineDurations();
     if (!this.updateWait()) {
         this.callNextMethod();
     }
@@ -4842,6 +4848,17 @@ Window_BattleLog.prototype.callNextMethod = function() {
     }
 };
 
+Window_BattleLog.prototype.updateLineDurations = function() {
+    for (var i = 0; i < this._lineDurations.length; i++) {
+        this._lineDurations[i]--;
+    }
+    if (this._lineDurations.length > 0 && this._lineDurations[0] <= 0) {
+        this._lineDurations.shift();
+        this._lines.shift();
+        this.refresh();
+    }
+};
+
 Window_BattleLog.prototype.isFastForward = function() {
     return (Input.isLongPressed('ok') || Input.isPressed('shift') ||
             TouchInput.isLongPressed());
@@ -4854,6 +4871,7 @@ Window_BattleLog.prototype.push = function(methodName) {
 
 Window_BattleLog.prototype.clear = function() {
     this._lines = [];
+    this._lineDurations = [];
     this._baseLineStack = [];
     this.refresh();
 };
@@ -4872,6 +4890,11 @@ Window_BattleLog.prototype.waitForMovement = function() {
 
 Window_BattleLog.prototype.addText = function(text) {
     this._lines.push(text);
+    this._lineDurations.push(this.lineDisplayDuration());
+    if (this._lines.length > this.maxLines()) {
+        this._lines.shift();
+        this._lineDurations.shift();
+    }
     this.refresh();
     this.wait();
 };
@@ -5049,7 +5072,6 @@ Window_BattleLog.prototype.startAction = function(subject, action, targets) {
 
 Window_BattleLog.prototype.endAction = function(subject) {
     this.push('waitForNewLine');
-    this.push('clear');
     this.push('performActionEnd', subject);
 };
 
@@ -5058,7 +5080,6 @@ Window_BattleLog.prototype.displayCurrentState = function(subject) {
     if (stateText) {
         this.push('addText', subject.name() + stateText);
         this.push('wait');
-        this.push('clear');
     }
 };
 
@@ -5207,7 +5228,6 @@ Window_BattleLog.prototype.displayAffectedStatus = function(target) {
 Window_BattleLog.prototype.displayAutoAffectedStatus = function(target) {
     if (target.result().isStatusAffected()) {
         this.displayAffectedStatus(target, null);
-        this.push('clear');
     }
 };
 
