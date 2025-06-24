@@ -10,7 +10,11 @@ window.TextManagerEx = {
     ConfigManager.language = lang;
     ConfigManager.save();
     return this.loadTexts().then(() => {
-      // SceneManager.goto(Scene_Map); // ou une scène custom
+      if (SceneManager._scene && SceneManager._scene.refresh) {
+        SceneManager._scene.refresh();
+      } else {
+        SceneManager.goto(SceneManager._scene.constructor);
+      }
     });
   },
 
@@ -47,14 +51,14 @@ const languageLabels = {
 const _Window_Options_addGeneralOptions = Window_Options.prototype.addGeneralOptions;
 Window_Options.prototype.addGeneralOptions = function() {
   _Window_Options_addGeneralOptions.call(this);
-  this.addCommand("Langue", "language");
+  this.addCommand(TextManagerEx.t("command.langue"), "language");
 };
 
 const _Window_Options_statusText = Window_Options.prototype.statusText;
 Window_Options.prototype.statusText = function(index) {
   const symbol = this.commandSymbol(index);
   if (symbol === "language") {
-    return `${languageLabels["fr"]}/${languageLabels["en"]}`;
+    return `${languageLabels[TextManagerEx._language]}`;
   }
   return _Window_Options_statusText.call(this, index);
 };
