@@ -2340,11 +2340,9 @@ BattleManager.changeActor = function(newActorIndex, lastActorActionState) {
     this._actorIndex = newActorIndex;
     var newActor = this.actor();
     if (lastActor) {
-        console.log("test1")
         lastActor.setActionState(lastActorActionState);
     }
     if (newActor) {
-        console.log("test2")
         newActor.setActionState('inputting');
     }
 };
@@ -2520,8 +2518,6 @@ BattleManager.startAction = function() {
 
 BattleManager.updateAction = function() {
     var target = this._targets.shift();
-    console.log("target: ")
-    console.log(target);
     if (target) {
         this.invokeAction(this._subject, target);
     } else {
