@@ -99,7 +99,6 @@
     }
 
     update() {
-	  console.log(this._cooldownTimer)
       super.update();
       if (!this._active) return;
       this._cooldownTimer++;

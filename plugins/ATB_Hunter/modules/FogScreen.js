@@ -1,5 +1,6 @@
 
 const fogConfigs = {
+  1: { name: "Fog1", speedX: 0.2, speedY: -0.8, opacity: 160, restrictedVision: false, restrictedVisionOpacity: 0.93, visionRadius: 150 },
   13: { name: "Fog1", speedX: 0.7, speedY: 0.5, opacity: 160, restrictedVision: true, restrictedVisionOpacity: 0.93, visionRadius: 150 },
   18: { name: "Fog1", speedX: 0.7, speedY: 0.5, opacity: 230, restrictedVision: true, restrictedVisionOpacity: 0.96, visionRadius: 110 },
   19: { name: "Fog1", speedX: 0.7, speedY: 0.5, opacity: 300, restrictedVision: true, restrictedVisionOpacity: 0.98, visionRadius: 80 },

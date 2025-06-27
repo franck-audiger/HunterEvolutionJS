@@ -16,6 +16,7 @@
       'ATB_Scene.js',
       'ATB_EnemyBars.js',
       'LangText.js',
+      'MiniGameAutoScroll.js',
       'FogScreen.js'
     ];
   
@@ -25,5 +26,6 @@
       script.async = false;
       document.body.appendChild(script);
     });
+
 
   })();
