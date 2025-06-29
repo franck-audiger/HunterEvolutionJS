@@ -1,0 +1,7 @@
+[
+null,
+{"id":1,"battlerName":"Gon","characterIndex":0,"characterName":"$Gon2","classId":1,"equips":[0,0,0,0,0],"faceIndex":0,"faceName":"Faces-Gon","traits":[],"initialLevel":1,"maxLevel":99,"name":"Gon","nickname":"","note":"","profile":""},
+{"id":2,"battlerName":"","characterIndex":0,"characterName":"$Killua2","classId":1,"equips":[0,0,0,0,0],"faceIndex":0,"faceName":"","traits":[],"initialLevel":1,"maxLevel":99,"name":"Killua","nickname":"","note":"","profile":""},
+{"id":3,"battlerName":"","characterIndex":0,"characterName":"$Kurapika","classId":1,"equips":[0,0,0,0,0],"faceIndex":0,"faceName":"Kurapika","traits":[],"initialLevel":1,"maxLevel":99,"name":"Kurapika","nickname":"","note":"","profile":""},
+{"id":4,"battlerName":"","characterIndex":0,"characterName":"$Leolio","classId":1,"equips":[0,0,0,0,0],"faceIndex":0,"faceName":"Leolio","traits":[],"initialLevel":1,"maxLevel":99,"name":"Léolio","nickname":"","note":"","profile":""}
+]
