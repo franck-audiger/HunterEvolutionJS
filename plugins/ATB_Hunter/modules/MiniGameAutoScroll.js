@@ -260,7 +260,6 @@ let messagesConfig = {
   }
 }
 const MESSAGE_HEIGHT = 168;
-
 function Sprite_CustomMessage() {
   Sprite.call(this);
   this._duration = 0;
@@ -286,6 +285,7 @@ Sprite_CustomMessage.prototype.setMessage = function(faceName, faceIndex, text, 
   this.visible = true;
   this.refresh();
 };
+
 Sprite_CustomMessage.prototype.refresh = function() {
   const bmp = this._container.bitmap;
   bmp.clear();
@@ -341,7 +341,6 @@ Sprite_CustomMessage.prototype.update = function() {
 
 let messagesShown = {}; 
 
-let counterDelayThunder = -1;
 let timerGameOver = -1;
 
 // === GESTION DES MESSAGES CUSTOM ===
@@ -495,71 +494,17 @@ Scene_Map.prototype.refreshMiniGameHUD = function() {
 Game_Player.prototype.setOpacity = function(value) {
   this._opacity = value;
 };
-// === FLASH ORAGE — Variables globales ===
-let lightningFlashFrame = Graphics.frameCount + Math.floor(Math.random() * 1200) + 600;
-let flashDuration = 0;
-
-function scheduleNextFlash() {
-  const interval = Math.floor(Math.random() * 1200) + 600; 
-  lightningFlashFrame = Graphics.frameCount + interval;
-}
-
-// === Crée tous les éléments visuels (fog, vision, flash) ===
+// === Mise à jour du flash d'orage ===
+// === Crée tous les éléments visuels (message) ===
 const _Scene_Map_createDisplayObjects_Combined = Scene_Map.prototype.createDisplayObjects;
 Scene_Map.prototype.createDisplayObjects = function() {
   _Scene_Map_createDisplayObjects_Combined.call(this);
 
-  // --- FOG
-  this.createFogOverlay();
-  this.createVisionOverlay();
-
   this._customMessageSprite = new Sprite_CustomMessage();
   this._customMessageSprite.y = Graphics.height - MESSAGE_HEIGHT;
   this.addChild(this._customMessageSprite);
-
-  // --- FLASH ORAGE (sous la vision, au-dessus du fog)
-  this._lightningFlash = new Sprite(new Bitmap(Graphics.width, Graphics.height));
-  this._lightningFlash.bitmap.fillAll('white');
-  this._lightningFlash.opacity = 0;
-  this._spriteset.addChild(this._lightningFlash); // entre fog et vision
 };
 
-// === Met à jour tous les effets visuels (fog + vision + flash) ===
-const _Scene_Map_update_Combined = Scene_Map.prototype.update;
-Scene_Map.prototype.update = function() {
-  _Scene_Map_update_Combined.call(this);
-
-
-
-  // --- FOG
-  this.updateFogOverlay();
-  this.updateVisionOverlay();
-
-  // --- FLASH ORAGE
-  if (isControlDisabled()) {
-
-    if(counterDelayThunder >= 0) 
-      counterDelayThunder--;
-
-    if(counterDelayThunder == 0){
-      AudioManager.playSe({ name: 'Thunder9', volume: 90, pitch: 100, pan: 0 });
-    }
-
-    if (Graphics.frameCount >= lightningFlashFrame) {
-      this._lightningFlash.opacity = 255;
-      flashDuration = 10;
-      counterDelayThunder = Math.floor(Math.random() * 120);
-      scheduleNextFlash();
-    }
-
-    if (flashDuration > 0) {
-      flashDuration--;
-      if (flashDuration === 0) {
-        this._lightningFlash.opacity = 0;
-      }
-    }
-  }
-};
 
 // === Mise à jour à chaque frame ===
 const _Game_Player_update_MiniGame = Game_Player.prototype.update;
@@ -670,6 +615,7 @@ Game_Player.prototype.update = function(sceneActive) {
     const clampedTargetX = Math.max(0, Math.min(targetX, maxX));
 
     const cameraSpeed = 0.2;
+    lastDisplayX = $gameMap._displayX;
     $gameMap._displayX += (clampedTargetX - $gameMap._displayX) * cameraSpeed;
 
     checkMessagesToShow(this._y);
@@ -679,6 +625,7 @@ Game_Player.prototype.update = function(sceneActive) {
     return Math.min(Math.max(this, min), max);
   };
 };
+
 
 function spawnRandomWaveEvent(playerX, playerY) {
   if(playerY > 60) return;

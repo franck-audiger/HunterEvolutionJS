@@ -8,5 +8,8 @@ var $plugins =
 {"name":"QTE_LakeMaster","status":true,"description":"QTE Plugin - Reflex sequence with anticipation delay, configurable input phase - v1.8","parameters":{"Success Switch ID":"10","QTE Window X":"200","QTE Window Y":"200","Prep Phase Duration":"150","Input Duration":"60","Delta between wrong input":"120"}},
 {"name":"CaptureVideoPlayer","status":false,"description":"Lecture vidéo personnalisée après délai - CaptureMaster - v1.0","parameters":{}},
 {"name":"ZQSDMapper","status":true,"description":"Active les touches ZQSD pour le déplacement du joueur (support AZERTY) [Hunter x Hunter Game].","parameters":{}},
-{"name":"ShowSign","status":true,"description":"Affiche un panneau directionnel sous forme de fenêtre de type dialogue semi-transparente et bloque le mouvement jusqu'à validation. [Hunter x Hunter Game]","parameters":{}}
+{"name":"ShowSign","status":true,"description":"Affiche un panneau directionnel sous forme de fenêtre de type dialogue semi-transparente et bloque le mouvement jusqu'à validation. [Hunter x Hunter Game]","parameters":{}},
+{"name":"BlockCamera","status":true,"description":"","parameters":{}},
+{"name":"QTE_Bar","status":true,"description":"QTE à barre temporelle - Affiche une barre de progression avec zone de réussite entre deux temps donnés - v1.0","parameters":{}},
+{"name":"FullScreenOverlay","status":true,"description":"Affiche une image en plein écran au-dessus de l'écran, en dessous des messages. Utilise showFullscreenOverlay('NomImage') / hideFullscreenOverlay().","parameters":{}}
 ];
